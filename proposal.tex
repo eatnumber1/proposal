@@ -3,10 +3,13 @@
 % rubber: setlist arguments -shell-escape
 % rubber: depend struct_introspect.c
 % rubber: depend introspection.h
-\documentclass[twocolumn,draft]{article}
-%\documentclass[twocolumn]{article}
+\documentclass[draft]{article}
+%\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{authblk}
 \usepackage{hyperref}
+\usepackage{bookmark}
 \usepackage[margin=1in]{geometry}
 %\usepackage{fullpage}
 \usepackage[kerning,tracking,spacing,selected,final]{microtype}
@@ -16,18 +19,21 @@
 \usepackage[position=top,skip=0pt]{subcaption}
 \usepackage{varioref}
 \usepackage[capitalise]{cleveref}
-\usepackage[numbers,sort&compress,elide]{natbib}
 \usepackage{paralist}
 %\usepackage{pslatex}
 \usepackage{tikz}
 \usepackage{ifdraft}
+\usepackage[backend=biber,sortcites,datezeros=false]{biblatex}
+
+\synctex=1
+\addbibresource{proposal.bib}
 
 \ifdraft{
 	\usepackage{fix-cm}
 	\usepackage{draftwatermark}
 	\SetWatermarkLightness{0.85}
 	\usepackage{xspace}
-	\newcommand{\todocite}{(\textbf{TODO: Citation})\xspace}
+	\newcommand{\todoautocite}{(\textbf{TODO: Citation})\xspace}
 }{}
 
 \DeclareCaptionFormat{normal}{\normalsize#1#2#3\par}
@@ -63,7 +69,7 @@
 
 \section{Introduction}
 The omnipresent support for introspection in modern programming languages
-indicates the usefulness of the tool. \cite{java-reflect, ruby-introspect,
+indicates the usefulness of the tool. \autocite{java-reflect, ruby-introspect,
 python-introspect, perl-introspect} Unfortunately, C, which is one of the most
 pervasive programming languages and the foundation of nearly every modern
 operating system, does not support introspection.
@@ -71,7 +77,7 @@ operating system, does not support introspection.
 I propose to bring introspection to the C language via a novel application of an
 old tool: the debugger. Debuggers have long had access to the type and naming
 information which is needed for introspection. On most UNIX platforms, this is
-accomplished by the debugger reading any DWARF \cite{dwarf} symbols which may
+accomplished by the debugger reading any DWARF \autocite{dwarf} symbols which may
 be present in the target binary. These symbols can be leveraged to gain the
 information which is needed to create a full-featured introspection API.
 
@@ -84,7 +90,7 @@ feature is the following use case:
 	terminal based game from a binary format composed of writing the structs
 	which compose the game state to disk to a more flexible JSON format. After
 	investigation, you discover that in order to do this, you can use the
-	Jansson \cite{jansson} C library to produce JSON. In order to do so, you
+	Jansson \autocite{jansson} C library to produce JSON. In order to do so, you
 	invoke variants of the \texttt{json\_object\_set} function as given by the
 	following prototype:
 	\begin{minted}[gobble=2,tabsize=2]{c}
@@ -106,9 +112,9 @@ which is able to introspect upon data in a meta-programming style.
 
 \section{Introspection in Current Programming Languages}
 Introspection is found in many of the programming languages commonly used today
-including Java \cite{java-reflect}, Ruby \cite{ruby-introspect},
-Python \cite{python-introspect}, Perl \cite{perl-introspect} and a
-limited form of introspection in C++ \cite{cpp-rtti}. The various approaches
+including Java \autocite{java-reflect}, Ruby \autocite{ruby-introspect},
+Python \autocite{python-introspect}, Perl \autocite{perl-introspect} and a
+limited form of introspection in C++ \autocite{cpp-rtti}. The various approaches
 to introspection differ in implementation detail; some receiving introspection
 as a direct consequence of the way they implement objects while some provide it
 as part of the standard library. Despite this, they all provide approximately
@@ -119,23 +125,23 @@ Two features are generally required in order to be considered introspection;
 \emph{type} and \emph{function enumeration}. In Java, the availability of
 \emph{type enumeration} means that a program can retrieve the name of an object
 and enumerate the fields of that object, retrieving strings representing their
-names, types and the values, including the object's methods. \emph{Function
+names, types and it's values, including the object's methods. \emph{Function
 enumeration} can then be performed on the methods of an object giving access to
 information about the return type and argument types, including the names of the
 arguments.
 
 Existing attempts to add introspection to C++ frequently require a separate
-description of the object to be implemented, as generated either using a
-separate parser \cite{seal-cpp} or using a complementary \emph{metadata object}
-\cite{deBayser:2012:SRT:2415308.2415317} and have the limitation that objects
+description of the object to be implemented which is generated using either a
+separate parser \autocite{seal-cpp} or using a complementary \emph{metadata object}
+\autocite{deBayser:2012:SRT:2415308.2415317} and have the limitation that objects
 which come from external libraries cannot be introspected. Our implementation of
 introspection will neither have this library boundary limitation nor require
 external tools or additional objects in order to operate.
 
 \section{Debugging in C}
 There already exist a number of tools for interactive debugging of C programs.
-Some of the more well known ones include GDB \cite{gdb}, WinDBG, Visual Studio's
-debugger and LLDB. \cite{lldb} Traditionally, these debuggers have been used
+Some of the more well known ones include GDB \autocite{gdb}, WinDBG, Visual Studio's
+debugger and LLDB. \autocite{lldb} Traditionally, these debuggers have been used
 interactively via the command line, although more recently debuggers such as the
 one embedded within Visual Studio integrate into an IDE.
 
@@ -221,23 +227,23 @@ example of the result of this is shown in \vref{fig:static_introspection}.
 
 \section{Related Work}
 \emph{A System for Runtime Type Introspection in C++}
-\cite{deBayser:2012:SRT:2415308.2415317} discusses an approach to introspection
+\autocite{deBayser:2012:SRT:2415308.2415317} discusses an approach to introspection
 for C++ whereby metadata objects are created using macros which are expected to
 be called at the definition of the object which is to be introspected.
 
-\emph{The Seal C++ Reflection System} \cite{seal-cpp} discusses an introspection
+\emph{The Seal C++ Reflection System} \autocite{seal-cpp} discusses an introspection
 system for C++ which uses a metadata generation tool to create descriptor files
 which contain the information needed for introspection.
 
-\emph{Reflection for C++} \cite{reflection-for-cpp} uses an approach very
-similar to the one proposed here, but instead of using an API to retrieve
+\emph{Reflection for C++} \autocite{reflection-for-cpp} uses an approach very
+similar to the one proposed here, but instead of using a debugger to retrieve
 debugging information, it instead reads the debugging symbols directly. This
 limits the API to only leveraging information that it can retrieve from the
 debugging symbols themselves, as opposed to could be retrieved via interactive
 debugging. This possibility is discussed in Section \ref{sec:future_work}.
 
 C++, along with all the other languages supported by Microsoft's CLR can be
-reflected upon by leveraging features exposed by the CLR. \cite{clr-cpp}
+reflected upon by leveraging features exposed by the CLR. \autocite{clr-cpp}
 
 \section{Approach \& Design}
 By leveraging LLDB, I hope to create an API which allows a program to read the
@@ -349,7 +355,7 @@ project would be measured by the following criteria:
 	code which is similar in structure to \vref{fig:struct_introspect:code}
 	is able to produce the output shown in \vref{fig:struct_introspect:output}
 \item
-	a proof-of-concept \texttt{abort\_with\_stacktrace()} function which when
+	a proof of concept \texttt{abort\_with\_stacktrace()} function which when
 	invoked prints a complete stack trace to standard error and exits and
 \item
 	the release of the source code in a usable, fully documented form on the
@@ -360,7 +366,6 @@ The work to create an introspective API is expected to take approximately three
 to four months. This is expected to occur between the months of April and
 August.
 
-% TODO: Fix overfull vbox.
 \begin{figure}
 	\begin{tikzpicture}[scale=.7]
 		\noindent
@@ -422,8 +427,8 @@ It should be possible to extend this API to operate with other debuggers (e.x.
 Windows). Currently, efforts will be focused on features of the introspective
 API before portability is considered.
 
-\bibliographystyle{plainnat}
-\bibliography{proposal}
+\onecolumn
+\printbibliography
 
 \end{document}
 

@@ -1,13 +1,14 @@
-RUBBER ?= rubber
+LATEXMK ?= latexmk
 
-RUBBEROPTS += --pdf --warn=all
+LATEXMKOPTS += -pdf -shell-escape
 
 JOBNAME ?= proposal
 
 .PHONY: all clean
 
 all:
-	$(RUBBER) $(RUBBEROPTS) $(JOBNAME)
+	$(LATEXMK) $(LATEXMKOPTS) $(JOBNAME)
+
 
 clean:
-	$(RUBBER) $(RUBBEROPTS) --clean $(JOBNAME)
+	$(LATEXMK) $(LATEXMKOPTS) -C $(JOBNAME)

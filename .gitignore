@@ -6,3 +6,8 @@
 *.out
 *.pyg
 *.pdf
+*.bcf
+*.fdb_latexmk
+*.fls
+*.run.xml
+*.synctex.gz
